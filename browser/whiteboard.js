@@ -7,7 +7,7 @@ window.whiteboard = new window.EventEmitter();
         fillColor: 'black'
     };
 
-    var mirrorPositions = [[255, 129],[400,350], [200, 500]];
+    var mirrorPositions = [[100, 100],[100,200], [100, 300]];
 
     var mirrorPaths = [];
     for (var i = 0, l = mirrorPositions.length; i < l; i++) {
@@ -18,27 +18,50 @@ window.whiteboard = new window.EventEmitter();
         mirrorPaths.push(rectPath);
     }
 
-    window.addEventListener('deviceorientation', function (e) {
+    // window.addEventListener('deviceorientation', function (e) {
+    //     var angle = {};
+
+    //     angle.x = Math.floor(e.gamma*50);
+    //     angle.y = Math.floor(e.beta*50);
+
+    //     whiteboard.rotate(angle, [socket.id], socket.id, true);
+    // });
+
+    window.addEventListener('mousemove', function (e) {
         var angle = {};
 
-        angle.x = Math.floor(e.gamma*50);
-        angle.y = Math.floor(e.beta*50);
+        angle.x = e.x;
+        angle.y = e.y;
 
-        whiteboard.rotate(angle, true);
-    })
+        whiteboard.rotate(angle, [socket.id], socket.id, false, true);
+    });
+    
 
-    whiteboard.rotate = function (angle, shouldBroadcast) {
+
+    whiteboard.rotate = function (angle, socketIds, theSocket, assign, shouldBroadcast) {
+
+        if(assign){
+            console.log(socketIds)
+            for(var i=0; i<socketIds.length; i++) {
+
+                mirrorPaths[i].player = socketIds[i];
+            }
+        }
 
         my = angle.y;
         mx = angle.x;
         px = 255;
         py = 129;
 
-        mirrorPaths[0].rotation = (Math.floor(180*Math.atan((my-py)/(mx-px))/Math.PI));
-        view.update([true])
+        for(var i=0; i<mirrorPaths.length; i++) {
+            if(mirrorPaths[i].player === theSocket) {
+                mirrorPaths[i].rotation = (Math.floor(180*Math.atan((my-py)/(mx-px))/Math.PI));
+            }
+        }
+        view.update([true]);
 
         if (shouldBroadcast) {
-            whiteboard.emit('rotate', angle);
+            whiteboard.emit('rotate', angle, socketIds, socket.id);
         }
         
     };

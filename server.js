@@ -42,7 +42,6 @@ io.on('connection', function(socket){
   socket.on('imTurning', function(angle, ids, id){
     if(people.indexOf(id) < 0) {
       people = people.concat(ids);
-      console.log(people)
     }
     // we need to emit an event all sockets except the socket that originally emitted the 
     // the draw data to the server 
@@ -53,41 +52,6 @@ io.on('connection', function(socket){
   }); 
 
 })
-
-/*
-ROOMS: 
-*/
-
-// var drawHistory = {};
-
-// io.on('connection', function (socket) {
-
-//     // scope issues 
-//     var room = null;
-
-//     // listens to 37 emit 
-//     socket.on('wantToJoinRoomPlox', function (roomName) {
-//         room = roomName;
-//         socket.join(roomName);
-
-
-//         if (!drawHistory[roomName]) {
-//             drawHistory[roomName] = [];
-//         }
-
-//         // console.log('drawhistory: ', drawHistory)
-//         socket.emit('drawHistory', drawHistory[roomName]);
-//     });
-
-//     socket.on('newDraw', function (start, end, color) {
-//         // data
-//         console.log('new draw', start, end, color)
-//         drawHistory[room].push({ start: start, end: end, color: color });
-//         socket.broadcast.to(room).emit('someoneElseDrew', start, end, color);
-//     });
-
-// });
-
 
 app.use(express.static(path.join(__dirname, 'browser')));
 

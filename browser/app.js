@@ -7,15 +7,15 @@ var socket = io(window.location.origin);
 socket.on('connect', function(){
 
   console.log('I have made a persistent two-way connection to the server!'); 
-  
+
 
   // the draw event is emitted in whiteboard.js and caught here
-  whiteboard.on('rotate', function toBeRunOnlyOnDraw(angle){
-      socket.emit('imTurning', angle)
+  whiteboard.on('rotate', function toBeRunOnlyOnDraw(angle, ids, id){
+      socket.emit('imTurning', angle, ids, id);
   })
 
-  socket.on('otherTurn', function(angle){
-    whiteboard.rotate(angle)
+  socket.on('otherTurn', function(angle, ids, id){
+    whiteboard.rotate(angle, ids, id, true)
   })
   
 })
